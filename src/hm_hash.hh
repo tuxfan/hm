@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <cstdlib>
+#include <sys/time.h>
 
 /*----------------------------------------------------------------------------*
  * Utilities
@@ -39,7 +40,7 @@ public:
 	typedef std::string key_t;
 	typedef void * value_t;
 	typedef std::map<key_t, value_t> hash_t;
-	typedef std::vector<hash_t> hash_vector_t;
+	typedef std::map<hash_token_t, hash_t> hash_map_t;
 
 	/*-------------------------------------------------------------------------*
 	 * Meyer's singlton instance.
@@ -55,9 +56,13 @@ public:
 	 *-------------------------------------------------------------------------*/
 
 	hash_token_t add_table() {
-		size_t tables = data_.size();
-		data_.resize(tables+1);
-		return tables;
+		// generate new token
+		hash_token_t _token = token_++;
+
+		// initialize table
+		data_[_token]["Rush Rules!!!"] = NULL;
+
+		return _token;
 	} // add_table
 
 	/*-------------------------------------------------------------------------*
@@ -66,7 +71,7 @@ public:
 
 	void add(hash_token_t token, key_t key, value_t value) {
 		// check for valid token
-		ASSERT(token < data_.size(), "Invalid hash token!!!");
+		ASSERT(data_.find(token) != data_.end(), "Invalid hash token!!!");
 
 		// set value
 		(data_[token])[key] = value;
@@ -78,9 +83,9 @@ public:
 
 	value_t find(hash_token_t token, key_t key) {
 		// check for valid token
-		ASSERT(token < data_.size(), "Invalid hash token!!!");
+		ASSERT(data_.find(token) != data_.end(), "Invalid hash token!!!");
 
-		hash_t _map = data_[token];
+		hash_t & _map = data_[token];
 
 		// check for valid key
 		ASSERT(_map.find(key) != _map.end(), "Invalid hash key!!!");
@@ -94,9 +99,9 @@ public:
 
 	int32_t remove(hash_token_t token, key_t key, int32_t free_memory) {
 		// check for valid token
-		ASSERT(token < data_.size(), "Invalid hash token!!!");
+		ASSERT(data_.find(token) != data_.end(), "Invalid hash token!!!");
 
-		hash_t _map = data_[token];
+		hash_t & _map = data_[token];
 
 		// check for valid key
 		ASSERT(_map.find(key) != _map.end(), "Invalid hash key!!!");
@@ -108,12 +113,7 @@ public:
 			free(_value);
 		} // if
 
-		for(auto ita = _map.begin(); ita != _map.end(); ++ita) {
-			if(_value == ita->second) {
-				_map.erase(ita);
-				break;
-			} // if
-		} // for
+		_map.erase(key);
 	} // remove
 
 	/*-------------------------------------------------------------------------*
@@ -122,9 +122,9 @@ public:
 
 	int32_t remove_table(hash_token_t token, int32_t free_memory) {
 		// check for valid token
-		ASSERT(token < data_.size(), "Invalid hash token!!!");
+		ASSERT(data_.find(token) != data_.end(), "Invalid hash token!!!");
 
-		hash_t _map = data_[token];
+		hash_t & _map = data_[token];
 
 		if(free_memory == 1) {
 			for(auto ita = _map.begin(); ita != _map.end(); ++ita) {
@@ -132,12 +132,7 @@ public:
 			} // for
 		} // if
 
-		for(auto ita = data_.begin(); ita != data_.end(); ++ita) {
-			if(_map == *ita) {
-				data_.erase(ita);
-				break;
-			} // if
-		} // for
+		data_.erase(token);
 	} // remove_table
 
 private:
@@ -155,7 +150,8 @@ private:
 	 * Aggregate data members.
 	 *-------------------------------------------------------------------------*/
 
-	hash_vector_t data_;
+	size_t token_;
+	hash_map_t data_;
 
 }; // class hm_hash
 
