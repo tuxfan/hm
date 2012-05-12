@@ -1,0 +1,26 @@
+#------------------------------------------------------------------------------#
+# HashMark Library
+#------------------------------------------------------------------------------#
+
+HashMark provides a very simple hash table with a C interface.  There are
+three functions:
+
+hm_add_table(size_t * id)
+-------------------------
+Creates a new table that can be accessed using the token 'id' which is
+initialized in the function.
+
+
+hm_add(size_t id, const char * key, void * value)
+-------------------------------------------------
+Adds the key/value pair to the hash table referenced by 'id'.
+
+
+void * hm_find(size_t id, const char * key)
+-------------------------------------------
+Returns the value referrenced by 'key' and 'id'.  NULL is returned if 'key'
+is not found.
+
+
+HashMark is implemented as a simple C interface to a C++
+std::vector<std::map<std::string, void *>> wrapped in a Meyer's singleton.
