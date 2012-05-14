@@ -44,7 +44,8 @@
 			}																\
 		} /* if */
 #else
-	#define ASSERT(v, c)
+	#define ASSERT_AND_CODE(v, c)
+	#define ASSERT_AND_NULL(v, c)
 #endif
 
 /*----------------------------------------------------------------------------*
