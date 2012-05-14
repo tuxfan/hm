@@ -26,3 +26,11 @@ void hm_remove(size_t id, const char * key, int32_t free_memory) {
 void hm_remove_table(size_t id, int32_t free_memory) {
 	hash.remove_table(id, free_memory);
 } // hm_remove_table
+
+void hm_set_property(uint32_t property) {
+	hash.set_property(property);
+} // hm_set_property
+
+void hm_unset_property(uint32_t property) {
+	hash.unset_property(property);
+} // hm_unset_property

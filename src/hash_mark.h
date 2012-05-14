@@ -6,6 +6,9 @@
 #define hash_mark_h
 
 #include <stdint.h>
+#include <stddef.h>
+
+#include <hm_flags.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -73,6 +76,28 @@ void hm_remove_table(size_t id, int32_t free_memory)
 @param free_memory Boolean flag: If \b free_memory is set to \b 1, the values associated with each key in the hash table will be free'd.  If \b free_memory is \b 0, no action will be taken.
  */
 void hm_remove_table(size_t id, int32_t free_memory);
+
+/*!
+\page hm_set_property
+Set hash property.
+
+\par Interface:
+void hm_set_property(uint32_t property)
+
+@param property The bitwise flag of the property to set.
+ */
+void hm_set_property(uint32_t property);
+
+/*!
+\page hm_unset_property
+Unset hash property.
+
+\par Interface:
+void hm_unset_property(uint32_t property)
+
+@param property The bitwise flag of the property to unset.
+ */
+void hm_unset_property(uint32_t property);
 
 #if defined(__cplusplus)
 }

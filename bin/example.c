@@ -10,9 +10,13 @@ int main(int argc, char ** argv) {
 	size_t t0, t1;
 	double * d0 = (double *)malloc(sizeof(double));
 	double * d1 = (double *)malloc(sizeof(double));
+	double * d2 = (double *)malloc(sizeof(double));
+	double * d3 = (double *)malloc(sizeof(double));
 	double * f = NULL;
 	*d0 = 2.0;
 	*d1 = 45.0;
+
+	hm_set_property(hm_free_data);
 
 	// add tables
 	hm_add_table(&t0);
@@ -24,6 +28,8 @@ int main(int argc, char ** argv) {
 	// add entries
 	hm_add(t0, "d0", d0);
 	hm_add(t0, "d1", d1);
+	hm_add(t1, "d2", d2);
+	hm_add(t1, "d3", d3);
 
 	f = (double *)hm_find(t0, "d0");
 	printf("found value(d0): %lf\n", *f);
