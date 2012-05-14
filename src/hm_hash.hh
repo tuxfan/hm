@@ -12,7 +12,6 @@
 #include <cstdint>
 #include <cstddef>
 #include <cstdlib>
-#include <sys/time.h>
 
 #include <hm_flags.h>
 
@@ -20,13 +19,33 @@
  * Utilities
  *----------------------------------------------------------------------------*/
 
-#define ASSERT(v, s)														\
-	if(!(v)) {																\
-		std::cerr << "HashMark Error: " << (s) << std::endl;	\
-		std::exit(1);														\
-	}
+#if defined(ENABLE_ASSERTIONS)
+	#define ASSERT_AND_CODE(v, c)									\
+		if(!(v)) {														\
+			if(property_set(hm_exit_on_error)) {				\
+				std::cerr << error_string((c)) << std::endl;	\
+				std::exit(1);											\
+			}																\
+			else {														\
+				result_ = c;											\
+				return c;												\
+			}																\
+		} /* if */
 
-#define HM_FREE_DATA 0x01
+	#define ASSERT_AND_NULL(v, c)									\
+		if(!(v)) {														\
+			if(property_set(hm_exit_on_error)) {				\
+				std::cerr << error_string((c)) << std::endl;	\
+				std::exit(1);											\
+			}																\
+			else {														\
+				result_ = c;											\
+				return NULL;											\
+			}																\
+		} /* if */
+#else
+	#define ASSERT(v, c)
+#endif
 
 /*----------------------------------------------------------------------------*
  * Simple hash class.
@@ -60,6 +79,8 @@ public:
 	 *-------------------------------------------------------------------------*/
 
 	hash_token_t add_table() {
+		result_ = hm_success;
+
 		// generate new token
 		hash_token_t _token = token_++;
 
@@ -73,10 +94,13 @@ public:
 	 * Add an entry to a hash table.
 	 *-------------------------------------------------------------------------*/
 
-	void add(hash_token_t token, key_t key, value_t value) {
+	int32_t add(hash_token_t token, key_t key, value_t value) {
+		result_ = hm_success;
+
 		// check for valid token
-		ASSERT(data_.find(token) != data_.end(), "Invalid hash token!!!");
-		ASSERT(data_[token].find(key) == data_[token].end(), "Key already exists!!!");
+		ASSERT_AND_CODE(data_.find(token) != data_.end(), hm_invalid_hash_token);
+		ASSERT_AND_CODE(data_[token].find(key) == data_[token].end(),
+			hm_hash_key_exists);
 
 		// set value
 		(data_[token])[key] = value;
@@ -87,13 +111,15 @@ public:
 	 *-------------------------------------------------------------------------*/
 
 	value_t find(hash_token_t token, key_t key) {
+		result_ = hm_success;
+
 		// check for valid token
-		ASSERT(data_.find(token) != data_.end(), "Invalid hash token!!!");
+		ASSERT_AND_NULL(data_.find(token) != data_.end(), hm_invalid_hash_token);
 
 		hash_t & _map = data_[token];
 
 		// check for valid key
-		ASSERT(_map.find(key) != _map.end(), "Invalid hash key!!!");
+		ASSERT_AND_NULL(_map.find(key) != _map.end(), hm_invalid_hash_key);
 
 		return _map[key];
 	} // find
@@ -103,13 +129,15 @@ public:
 	 *-------------------------------------------------------------------------*/
 
 	int32_t remove(hash_token_t token, key_t key, int32_t free_memory) {
+		result_ = hm_success;
+
 		// check for valid token
-		ASSERT(data_.find(token) != data_.end(), "Invalid hash token!!!");
+		ASSERT_AND_CODE(data_.find(token) != data_.end(), hm_invalid_hash_token);
 
 		hash_t & _map = data_[token];
 
 		// check for valid key
-		ASSERT(_map.find(key) != _map.end(), "Invalid hash key!!!");
+		ASSERT_AND_CODE(_map.find(key) != _map.end(), hm_invalid_hash_key);
 
 		value_t _value = _map[key];
 
@@ -126,8 +154,10 @@ public:
 	 *-------------------------------------------------------------------------*/
 
 	int32_t remove_table(hash_token_t token, int32_t free_memory) {
+		result_ = hm_success;
+
 		// check for valid token
-		ASSERT(data_.find(token) != data_.end(), "Invalid hash token!!!");
+		ASSERT_AND_CODE(data_.find(token) != data_.end(), hm_invalid_hash_token);
 
 		hash_t & _map = data_[token];
 
@@ -140,13 +170,34 @@ public:
 		data_.erase(token);
 	} // remove_table
 
+	/*-------------------------------------------------------------------------*
+	 * Set hash properties.
+	 *-------------------------------------------------------------------------*/
+
 	uint32_t set_property(uint32_t property) {
+		result_ = hm_success;
 		properties_ |= property;
+		return properties_;
 	} // hm_set_property
 
+	/*-------------------------------------------------------------------------*
+	 * Unset hash properties.
+	 *-------------------------------------------------------------------------*/
+
 	uint32_t unset_property(uint32_t property) {
+		result_ = hm_success;
 		properties_ & ~property;
+		return properties_;
 	} // hm_set_property
+
+	const char * error_string(int32_t code) {
+		result_ = hm_success;
+		return error_strings_[code == 0 ? code : -code];
+	} // hm_error_string
+
+	uint32_t result() {
+		return result_;
+	} // result
 
 private:
 
@@ -185,6 +236,14 @@ private:
 	size_t token_;
 	hash_map_t data_;
 	uint32_t properties_;
+	int32_t result_;
+
+	const char * error_strings_[4] = {
+		"HashMark: Success",
+		"HashMark Error: Invalid Hash Token!!!",
+		"HashMark Error: Invalid Hash Key!!!",
+		"HashMark Error: Hash Key Exists!!!"
+	};
 
 }; // class hm_hash
 

@@ -99,6 +99,17 @@ void hm_unset_property(uint32_t property)
  */
 void hm_unset_property(uint32_t property);
 
+/*!
+\page hm_error_string
+Translate a HashMark error code into human-readable text.
+
+\par Interface:
+const char * hm_error_string(int32_t code)
+
+@param code Error code to be translated.
+ */
+const char * hm_error_string(int32_t code);
+
 #if defined(__cplusplus)
 }
 #endif
