@@ -13,6 +13,8 @@
 #include <cstddef>
 #include <cstdlib>
 
+#define _include_hash_mark_h
+
 #include <hm_flags.h>
 
 /*----------------------------------------------------------------------------*

@@ -20,7 +20,7 @@ int main(int argc, char ** argv) {
 	*d1 = 45.0;
 
 	hm_set_property(hm_free_data);
-	hm_set_property(hm_exit_on_error);
+	//hm_set_property(hm_exit_on_error);
 
 	// add tables
 	hm_add_table(&t0);
@@ -45,6 +45,7 @@ int main(int argc, char ** argv) {
 	hm_add(t1, "d3", d3);
 
 	f = (double *)hm_find(t0, "d0");
+	printf("result: %"PRIi32"\n", hm_result);
 	printf("found value(d0): %lf\n", *f);
 
 	f = (double *)hm_find(t0, "d1");

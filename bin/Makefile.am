@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------#
 
-bin_PROGRAMS = example
+bin_PROGRAMS = hm_example
 
 INCLUDES = -I${top_srcdir}/src
 
-example_SOURCES = @top_builddir@/bin/example.c
-example_LDADD = ${top_builddir}/lib/libhm.la
+hm_example_SOURCES = @top_builddir@/bin/hm_example.c
+hm_example_LDADD = ${top_builddir}/lib/libhm.la

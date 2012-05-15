@@ -38,9 +38,9 @@ echo "#-------------------------------------------------------------------------
 echo
 echo "libhm_include_HEADERS = \\"
 
-numfiles=`$find_exec src -type f -regex '.*\.h*' | wc -l`
+numfiles=`$find_exec src -type f -regex '.*\.h' | wc -l`
 cnt=1
-for file in `$find_exec src -type f -regex '.*\.h*'` ; do
+for file in `$find_exec src -type f -regex '.*\.h'` ; do
 	if [ $cnt == $numfiles ] ; then
 		echo "	\${top_srcdir}/$file"
 	else

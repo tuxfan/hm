@@ -8,6 +8,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#define _include_hash_mark_h
+
 #include <hm_flags.h>
 
 #if defined(__cplusplus)

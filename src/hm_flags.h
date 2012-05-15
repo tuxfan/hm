@@ -2,6 +2,12 @@
  * Various flags for HashMark configuration
  *----------------------------------------------------------------------------*/
 
+#if !defined(_include_hash_mark_h)
+	#error "Do not include this file directly, use hash_mark.h"
+#endif
+
+#undef _include_hash_mark_h
+
 #ifndef hm_flags_h
 #define hm_flags_h
 
