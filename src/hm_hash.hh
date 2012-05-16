@@ -8,6 +8,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <mutex>
 #include <string>
 #include <cstdint>
 #include <cstddef>
@@ -82,6 +83,9 @@ public:
 	 *-------------------------------------------------------------------------*/
 
 	hash_token_t add_table() {
+		// acquire lock
+		std::lock_guard<std::mutex> lock(m_);
+
 		result_ = hm_success;
 
 		// generate new token
@@ -98,10 +102,14 @@ public:
 	 *-------------------------------------------------------------------------*/
 
 	int32_t add(hash_token_t token, key_t key, value_t value) {
+		// acquire lock
+		std::lock_guard<std::mutex> lock(m_);
+
 		result_ = hm_success;
 
 		// check for valid token
-		ASSERT_AND_CODE(data_.find(token) != data_.end(), hm_invalid_hash_token);
+		ASSERT_AND_CODE(data_.find(token) != data_.end(),
+			hm_invalid_hash_token);
 		ASSERT_AND_CODE(data_[token].find(key) == data_[token].end(),
 			hm_hash_key_exists);
 
@@ -114,10 +122,14 @@ public:
 	 *-------------------------------------------------------------------------*/
 
 	value_t find(hash_token_t token, key_t key) {
+		// acquire lock
+		std::lock_guard<std::mutex> lock(m_);
+
 		result_ = hm_success;
 
 		// check for valid token
-		ASSERT_AND_NULL(data_.find(token) != data_.end(), hm_invalid_hash_token);
+		ASSERT_AND_NULL(data_.find(token) != data_.end(),
+			hm_invalid_hash_token);
 
 		hash_t & _map = data_[token];
 
@@ -132,10 +144,14 @@ public:
 	 *-------------------------------------------------------------------------*/
 
 	int32_t remove(hash_token_t token, key_t key, int32_t free_memory) {
+		// acquire lock
+		std::lock_guard<std::mutex> lock(m_);
+
 		result_ = hm_success;
 
 		// check for valid token
-		ASSERT_AND_CODE(data_.find(token) != data_.end(), hm_invalid_hash_token);
+		ASSERT_AND_CODE(data_.find(token) != data_.end(),
+			hm_invalid_hash_token);
 
 		hash_t & _map = data_[token];
 
@@ -157,10 +173,14 @@ public:
 	 *-------------------------------------------------------------------------*/
 
 	int32_t remove_table(hash_token_t token, int32_t free_memory) {
+		// acquire lock
+		std::lock_guard<std::mutex> lock(m_);
+
 		result_ = hm_success;
 
 		// check for valid token
-		ASSERT_AND_CODE(data_.find(token) != data_.end(), hm_invalid_hash_token);
+		ASSERT_AND_CODE(data_.find(token) != data_.end(),
+			hm_invalid_hash_token);
 
 		hash_t & _map = data_[token];
 
@@ -178,7 +198,11 @@ public:
 	 *-------------------------------------------------------------------------*/
 
 	uint32_t set_property(uint32_t property) {
+		// acquire lock
+		std::lock_guard<std::mutex> lock(m_);
+
 		result_ = hm_success;
+
 		properties_ |= property;
 		return properties_;
 	} // hm_set_property
@@ -188,7 +212,11 @@ public:
 	 *-------------------------------------------------------------------------*/
 
 	uint32_t unset_property(uint32_t property) {
+		// acquire lock
+		std::lock_guard<std::mutex> lock(m_);
+
 		result_ = hm_success;
+
 		properties_ & ~property;
 		return properties_;
 	} // hm_set_property
@@ -209,6 +237,9 @@ private:
 	 *-------------------------------------------------------------------------*/
 
 	bool property_set(uint32_t property) {
+		// acquire lock
+		std::lock_guard<std::mutex> lock(m_);
+
 		return properties_ & property;
 	} // property_set
 
@@ -221,6 +252,9 @@ private:
 	hm_hash & operator = (const hm_hash &);
 
 	~hm_hash() {
+		// acquire lock
+		std::lock_guard<std::mutex> lock(m_);
+
 		if(property_set(hm_free_data)) {
 			for(auto t = data_.begin(); t != data_.end(); ++t) {
 				hash_t _h = t->second;
@@ -240,6 +274,7 @@ private:
 	hash_map_t data_;
 	uint32_t properties_;
 	int32_t result_;
+	std::mutex m_;
 
 	const char * error_strings_[4] = {
 		"HashMark: Success",
