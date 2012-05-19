@@ -17,6 +17,31 @@ extern "C" {
 #endif
 
 /*!
+\page hashmark
+Hash table interface.
+
+\par Description:
+HashMark is a set of C functions for creating and managing hash tables.  It is designed to be thread-safe and simple, and is built on top of the STL std::map class.  The actual underlying C++ data type is a \b std::map<size_t, \b std::map<std::string, \b void \b *>>.  Thread safety is achieved using \b std::mutex and \b std::guard_lock (these may or may not be very efficient).
+
+\par Documentation:
+Documentation is available for the individual subroutines, e.g., man hm_add
+
+\par Main Interface:
+The main interface allows creation and manipulation of hash tables.  It consists of the following functions: \n\n
+\ref hm_add_table \n
+\ref hm_add \n
+\ref hm_find \n
+\ref hm_table_exists \n
+\ref hm_key_exists \n
+\ref hm_remove \n
+\ref hm_remove_table \n
+\ref hm_clear \n
+\ref hm_set_property \n
+\ref hm_unset_property \n
+\ref hm_error_string \n
+ */
+
+/*!
 \page hm_add_table
 Add a new hash table.
 
