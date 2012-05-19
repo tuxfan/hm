@@ -231,9 +231,10 @@ public:
 					free(st->second);
 				} // for
 
-				data_.erase(t->first);
 			} // for
 		} // if
+
+		data_.clear();
 	} // clear
 
 	/*-------------------------------------------------------------------------*
