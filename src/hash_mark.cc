@@ -25,6 +25,18 @@ void * hm_find(size_t id, const char * key) {
 	return _tmp;
 } // hm_find
 
+int32_t hm_table_exists(size_t id) {
+	int32_t _value = hash.table_exists(id);
+	hm_result = hash.result();
+	return _value;
+} // hm_key_exists
+
+int32_t hm_key_exists(size_t id, const char * key) {
+	int32_t _value = hash.key_exists(id, key);
+	hm_result = hash.result();
+	return _value;
+} // hm_key_exists
+
 void hm_remove(size_t id, const char * key, int32_t free_memory) {
 	hash.remove(id, key, free_memory);
 	hm_result = hash.result();
@@ -34,6 +46,11 @@ void hm_remove_table(size_t id, int32_t free_memory) {
 	hash.remove_table(id, free_memory);
 	hm_result = hash.result();
 } // hm_remove_table
+
+void hm_clear(int32_t free_memory) {
+	hash.clear(free_memory);
+	hm_result = hash.result();
+} // hm_clear
 
 void hm_set_property(uint32_t property) {
 	hash.set_property(property);

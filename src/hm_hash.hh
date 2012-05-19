@@ -140,6 +140,28 @@ public:
 	} // find
 
 	/*-------------------------------------------------------------------------*
+	 * Check to see if a hash table exists.
+	 *-------------------------------------------------------------------------*/
+
+	int32_t table_exists(hash_token_t token) {
+		return data_.find(token) == data_.end() ? 0 : 1;
+	} // table_exists
+
+	/*-------------------------------------------------------------------------*
+	 * Check if an entry exists in a hash table.
+	 *-------------------------------------------------------------------------*/
+
+	int32_t key_exists(hash_token_t token, key_t key) {
+		// check for valid token
+		ASSERT_AND_CODE(data_.find(token) != data_.end(),
+			hm_invalid_hash_token);
+
+		hash_t & _map = data_[token];
+
+		return _map.find(key) == _map.end() ? 0 : 1;
+	} // key_exists
+
+	/*-------------------------------------------------------------------------*
 	 * Remove an entry from a hash table.
 	 *-------------------------------------------------------------------------*/
 
@@ -194,6 +216,27 @@ public:
 	} // remove_table
 
 	/*-------------------------------------------------------------------------*
+	 * Remove everything from hash.
+	 *-------------------------------------------------------------------------*/
+
+	int32_t clear(int32_t free_memory) {
+		// acquire lock
+		std::lock_guard<std::mutex> lock(m_);
+
+		if(property_set(hm_free_data)) {
+			for(auto t = data_.begin(); t != data_.end(); ++t) {
+				hash_t _h = t->second;
+
+				for(auto st = _h.begin(); st != _h.end(); ++st) {
+					free(st->second);
+				} // for
+
+				data_.erase(t->first);
+			} // for
+		} // if
+	} // clear
+
+	/*-------------------------------------------------------------------------*
 	 * Set hash properties.
 	 *-------------------------------------------------------------------------*/
 
@@ -237,9 +280,6 @@ private:
 	 *-------------------------------------------------------------------------*/
 
 	bool property_set(uint32_t property) {
-		// acquire lock
-		std::lock_guard<std::mutex> lock(m_);
-
 		return properties_ & property;
 	} // property_set
 
@@ -252,18 +292,7 @@ private:
 	hm_hash & operator = (const hm_hash &);
 
 	~hm_hash() {
-		// acquire lock
-		std::lock_guard<std::mutex> lock(m_);
-
-		if(property_set(hm_free_data)) {
-			for(auto t = data_.begin(); t != data_.end(); ++t) {
-				hash_t _h = t->second;
-
-				for(auto st = _h.begin(); st != _h.end(); ++st) {
-					free(st->second);
-				} // for
-			} // for
-		} // if
+		clear(property_set(hm_free_data));
 	} // ~hm_hash
 
 	/*-------------------------------------------------------------------------*

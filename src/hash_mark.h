@@ -55,6 +55,33 @@ void * hm_find(size_t id, const char * key)
 void * hm_find(size_t id, const char * key);
 
 /*!
+\page hm_table_exists
+Check if hash entry exists.
+
+\par Interface:
+int32_t hm_table_exists(size_t id);
+
+@param id The id of the hash to be checked. \n
+
+@return This function returns \b 1 if the table exists, \b 0 otherwise.
+ */
+int32_t hm_table_exists(size_t id, const char * key);
+
+/*!
+\page hm_key_exists
+Check if hash entry exists.
+
+\par Interface:
+int32_t hm_key_exists(size_t id, const char * key);
+
+@param id The id of the hash to be checked. \n
+@param key Hash string identifier. \n
+
+@return This function returns \b 1 if the key exists, \b 0 otherwise.
+ */
+int32_t hm_key_exists(size_t id, const char * key);
+
+/*!
 \page hm_remove
 Remove an entry from a hash table.
 
@@ -78,6 +105,17 @@ void hm_remove_table(size_t id, int32_t free_memory)
 @param free_memory Boolean flag: If \b free_memory is set to \b 1, the values associated with each key in the hash table will be free'd.  If \b free_memory is \b 0, no action will be taken.
  */
 void hm_remove_table(size_t id, int32_t free_memory);
+
+/*!
+\page hm_clear
+Remove all tables and entries from HashMark.
+
+\par Interface:
+void hm_clear(int32_t free_memory)
+
+@param free_memory Boolean flag: If \b free_memory is set to \b 1, the values associated with each key in the hash table will be free'd.  If \b free_memory is \b 0, no action will be taken.
+ */
+void hm_clear(int32_t free_memory);
 
 /*!
 \page hm_set_property
