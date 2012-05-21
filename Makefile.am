@@ -29,7 +29,7 @@ install-data-hook:
 	@([ -d ${top_builddir}/@DOC@ ] && \
 		([ -d ${mandir} ] || mkdir -p ${mandir}) && \
 		([ -d ${top_builddir}/doc/man ] && \
-		cp -r ${top_builddir}/doc/man/* ${mandir}))
+			cp -r ${top_builddir}/doc/man/* ${mandir}))
 
 #------------------------------------------------------------------------------#
 # Dummy rule
