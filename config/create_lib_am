@@ -29,7 +29,7 @@ echo "INCLUDES = -I\${top_srcdir}/src"
 echo
 echo "libhm_includedir = \${includedir}"
 echo
-echo "AM_CPPFLAGS = -std=c++0x"
+echo "AM_CPPFLAGS = @EXTRA_CPPFLAGS@"
 
 echo
 echo "#------------------------------------------------------------------------------#"
