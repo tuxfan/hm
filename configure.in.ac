@@ -44,8 +44,27 @@ CONFIG_GENERIC_ENABLE(assertions, ASSERTIONS)
 # Handle known C++ compilers
 #------------------------------------------------------------------------------#
 
-[[[ "$CXX" == *g++* ]]] && EXTRA_CPPFLAGS = "-std=c++11"
-[[[ "$CXX" == *icc* ]]] && EXTRA_CPPFLAGS = "-std=c++0x"
+if [[[ "$CXXFLAGS" = *"-g -O2"* ]]] ; then
+	case "$cc_basename" in
+		g++)
+			STD_FLAG="-std=c++11"
+			CXXFLAGS="-O3"
+		;;
+		icc|icpc)
+			STD_FLAG="-std=c++0x"
+			CXXFLAGS="-O3"
+		;;
+		*)
+			AC_MSG_ERROR(unsupported C++ compiler)
+		;;
+	esac
+
+	EXTRA_CPPFLAGS="$EXTRA_CPPFLAGS $STD_FLAG"
+fi
+
+#------------------------------------------------------------------------------#
+# Set extras
+#------------------------------------------------------------------------------#
 
 AC_SUBST(EXTRA_CPPFLAGS)
 
