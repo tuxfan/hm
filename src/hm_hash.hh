@@ -115,6 +115,8 @@ public:
 
 		// set value
 		(data_[token])[key] = value;
+
+		return 0;
 	} // add
 
 	/*-------------------------------------------------------------------------*
@@ -188,6 +190,8 @@ public:
 		} // if
 
 		_map.erase(key);
+
+		return 0;
 	} // remove
 
 	/*-------------------------------------------------------------------------*
@@ -213,6 +217,8 @@ public:
 		} // if
 
 		data_.erase(token);
+
+		return 0;
 	} // remove_table
 
 	/*-------------------------------------------------------------------------*
@@ -235,6 +241,8 @@ public:
 		} // if
 
 		data_.clear();
+
+		return 0;
 	} // clear
 
 	/*-------------------------------------------------------------------------*
@@ -248,6 +256,7 @@ public:
 		result_ = hm_success;
 
 		properties_ |= property;
+
 		return properties_;
 	} // hm_set_property
 
@@ -262,11 +271,13 @@ public:
 		result_ = hm_success;
 
 		properties_ & ~property;
+
 		return properties_;
 	} // hm_set_property
 
 	const char * error_string(int32_t code) {
 		result_ = hm_success;
+
 		return error_strings_[code == 0 ? code : -code];
 	} // hm_error_string
 
