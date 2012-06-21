@@ -223,7 +223,7 @@ public:
 		// acquire lock
 		std::lock_guard<std::mutex> lock(m_);
 
-		if(property_set(hm_free_data)) {
+		if(free_memory == 1) {
 			for(auto t = data_.begin(); t != data_.end(); ++t) {
 				hash_t _h = t->second;
 
