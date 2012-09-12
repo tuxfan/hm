@@ -46,7 +46,7 @@ CONFIG_GENERIC_ENABLE(assertions, ASSERTIONS)
 
 if [[[ "$CXXFLAGS" = *"-g -O2"* ]]] ; then
 	case "$cc_basename" in
-		g++)
+		g++|clang++)
 			STD_FLAG="-std=c++11"
 			CXXFLAGS="-O3"
 		;;
