@@ -25,11 +25,9 @@ echo "#-------------------------------------------------------------------------
 echo
 echo "lib_LTLIBRARIES = libhm.la"
 echo
-echo "INCLUDES = -I\${top_srcdir}/src"
-echo
 echo "libhm_includedir = \${includedir}"
 echo
-echo "AM_CPPFLAGS = @EXTRA_CPPFLAGS@"
+echo "AM_CPPFLAGS = -I\${top_srcdir}/src @EXTRA_CPPFLAGS@"
 
 echo
 echo "#------------------------------------------------------------------------------#"
