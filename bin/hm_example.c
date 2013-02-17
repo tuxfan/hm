@@ -51,9 +51,15 @@ int main(int argc, char ** argv) {
 	f = (double *)hm_find(t0, "d1");
 	printf("found value(d1): %lf\n", *f);
 
+#if 0
 	hm_remove(t0, "d0", 1);
+	hm_remove(t0, "d1", 1);
+	hm_remove(t1, "d2", 1);
+	hm_remove(t1, "d3", 1);
 
 	hm_remove_table(t0, 1);
+	hm_remove_table(t1, 1);
+#endif
 
 	return 0;
 } // main

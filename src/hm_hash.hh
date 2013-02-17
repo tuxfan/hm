@@ -5,6 +5,10 @@
 #ifndef hash_hxx
 #define hash_hxx
 
+#if defined(HAVE_CONFIG_H)
+	#include <hm_config.h>
+#endif
+
 #include <iostream>
 #include <map>
 #include <vector>
@@ -22,8 +26,15 @@
  * Utilities
  *----------------------------------------------------------------------------*/
 
-#if defined(ENABLE_ASSERTIONS)
-	#define ASSERT_AND_CODE(v, c)									\
+#if defined(ENABLE_HM_DEBUG)
+	#define HM_DEBUG(s)					\
+		std::cerr << s << std::endl
+#else
+	#define HM_DEBUG(s)
+#endif
+
+#if defined(ENABLE_HM_ASSERTIONS)
+	#define HM_ASSERT_AND_CODE(v, c)								\
 		if(!(v)) {														\
 			if(property_set(hm_exit_on_error)) {				\
 				std::cerr << error_string((c)) << std::endl;	\
@@ -35,7 +46,7 @@
 			}																\
 		} /* if */
 
-	#define ASSERT_AND_NULL(v, c)									\
+	#define HM_ASSERT_AND_NULL(v, c)								\
 		if(!(v)) {														\
 			if(property_set(hm_exit_on_error)) {				\
 				std::cerr << error_string((c)) << std::endl;	\
@@ -47,8 +58,8 @@
 			}																\
 		} /* if */
 #else
-	#define ASSERT_AND_CODE(v, c)
-	#define ASSERT_AND_NULL(v, c)
+	#define HM_ASSERT_AND_CODE(v, c)
+	#define HM_ASSERT_AND_NULL(v, c)
 #endif
 
 /*----------------------------------------------------------------------------*
@@ -108,9 +119,9 @@ public:
 		result_ = hm_success;
 
 		// check for valid token
-		ASSERT_AND_CODE(data_.find(token) != data_.end(),
+		HM_ASSERT_AND_CODE(data_.find(token) != data_.end(),
 			hm_invalid_hash_token);
-		ASSERT_AND_CODE(data_[token].find(key) == data_[token].end(),
+		HM_ASSERT_AND_CODE(data_[token].find(key) == data_[token].end(),
 			hm_hash_key_exists);
 
 		// set value
@@ -130,13 +141,13 @@ public:
 		result_ = hm_success;
 
 		// check for valid token
-		ASSERT_AND_NULL(data_.find(token) != data_.end(),
+		HM_ASSERT_AND_NULL(data_.find(token) != data_.end(),
 			hm_invalid_hash_token);
 
 		hash_t & _map = data_[token];
 
 		// check for valid key
-		ASSERT_AND_NULL(_map.find(key) != _map.end(), hm_invalid_hash_key);
+		HM_ASSERT_AND_NULL(_map.find(key) !=_map.end(), hm_invalid_hash_key);
 
 		return _map[key];
 	} // find
@@ -155,7 +166,7 @@ public:
 
 	int32_t key_exists(hash_token_t token, key_t key) {
 		// check for valid token
-		ASSERT_AND_CODE(data_.find(token) != data_.end(),
+		HM_ASSERT_AND_CODE(data_.find(token) != data_.end(),
 			hm_invalid_hash_token);
 
 		hash_t & _map = data_[token];
@@ -174,15 +185,18 @@ public:
 		result_ = hm_success;
 
 		// check for valid token
-		ASSERT_AND_CODE(data_.find(token) != data_.end(),
+		HM_ASSERT_AND_CODE(data_.find(token) != data_.end(),
 			hm_invalid_hash_token);
 
 		hash_t & _map = data_[token];
 
 		// check for valid key
-		ASSERT_AND_CODE(_map.find(key) != _map.end(), hm_invalid_hash_key);
+		HM_ASSERT_AND_CODE(_map.find(key) != _map.end(), hm_invalid_hash_key);
 
 		value_t _value = _map[key];
+
+		HM_DEBUG("Token " << token << " removing " << key
+			<< " with value " << _value);
 
 		// free data if requested
 		if(free_memory == 1) {
@@ -205,10 +219,12 @@ public:
 		result_ = hm_success;
 
 		// check for valid token
-		ASSERT_AND_CODE(data_.find(token) != data_.end(),
+		HM_ASSERT_AND_CODE(data_.find(token) != data_.end(),
 			hm_invalid_hash_token);
 
 		hash_t & _map = data_[token];
+
+		HM_DEBUG("Removing table with token " << token);
 
 		if(free_memory == 1) {
 			for(auto ita = _map.begin(); ita != _map.end(); ++ita) {
@@ -233,7 +249,11 @@ public:
 			for(auto t = data_.begin(); t != data_.end(); ++t) {
 				hash_t _h = t->second;
 
+				HM_DEBUG("Token " << t->first << " being cleared");
+
 				for(auto st = _h.begin(); st != _h.end(); ++st) {
+					HM_DEBUG("Freeing " << st->first <<
+						" with address " << st->second);
 					free(st->second);
 				} // for
 
