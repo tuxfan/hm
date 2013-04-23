@@ -26,7 +26,7 @@ doc: FORCE
 #------------------------------------------------------------------------------#
 
 install-exec-hook:
-	@(cp ${top_builddir}/local/hm_config.h ${includedir})
+	@(install -c -m 644 ${top_builddir}/local/hm_config.h ${includedir})
 
 #------------------------------------------------------------------------------#
 # Extra install data
@@ -37,6 +37,14 @@ install-data-hook:
 		([ -d ${mandir} ] || mkdir -p ${mandir}) && \
 		([ -d ${top_builddir}/doc/man ] && \
 			cp -r ${top_builddir}/doc/man/* ${mandir}))
+
+uninstall-hook:
+	@([ -d ${mandir} ] && \
+		rm -rf ${mandir}/*/hm_* && \
+		rm -rf ${mandir}/*/hashmark.* \
+		rm -rf ${mandir}/*/*_hash_mark* && \
+		[ -d ${includedir} ] && \
+		rm -rf ${includedir}/hm_config.h)
 
 #------------------------------------------------------------------------------#
 # Dummy rule
